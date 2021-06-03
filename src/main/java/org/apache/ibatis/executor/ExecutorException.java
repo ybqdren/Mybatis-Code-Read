@@ -35,7 +35,6 @@ public class ExecutorException extends PersistenceException {
   public ExecutorException(String message, Throwable cause) {
     super(message, cause);
   }
-
   public ExecutorException(Throwable cause) {
     super(cause);
   }

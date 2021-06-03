@@ -28,6 +28,13 @@ import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
+
+/**
+ * ParamNameResolver是一个参数名解析器，用来按顺序列出方法中的虚参，
+ * 并对实参进行名称标注。
+ *
+ * 参数名解析器中主要设计的是字符串。
+ */
 public class ParamNameResolver {
 
   private static final String GENERIC_NAME_PREFIX = "param";
@@ -45,10 +52,22 @@ public class ParamNameResolver {
    * <li>aMethod(int a, RowBounds rb, int b) -&gt; {{0, "0"}, {2, "1"}}</li>
    * </ul>
    */
+
+  // 方法输入参数的参数次序表，键为参数次序，值为参数名称或者参数@Param注解的值
   private final SortedMap<Integer, String> names;
 
+  // 该方法输入参数中是否含有@Param注释
   private boolean hasParamAnnotation;
 
+  /**
+   * ParamNameResolver类中主要的方法：构造方法
+   *
+   * 能够将目标方法的参数名称一次列举出来。在列举的过程中，
+   * 如果某个参数存在@Param注解，则会用注解的value值替换参数名
+   *
+   * @param config
+   * @param method
+   */
   public ParamNameResolver(Configuration config, Method method) {
     final Class<?>[] paramTypes = method.getParameterTypes();
     final Annotation[][] paramAnnotations = method.getParameterAnnotations();
@@ -84,6 +103,12 @@ public class ParamNameResolver {
     names = Collections.unmodifiableSortedMap(map);
   }
 
+  /**
+   * ParamNameResolver类中主要的方法：
+   * @param method
+   * @param paramIndex
+   * @return
+   */
   private String getActualParamName(Method method, int paramIndex) {
     return ParamNameUtil.getParamNames(method).get(paramIndex);
   }
