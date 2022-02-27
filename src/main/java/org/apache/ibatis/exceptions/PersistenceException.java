@@ -27,7 +27,6 @@ public class PersistenceException extends IbatisException {
   public PersistenceException() {
     super();
   }
-
   // 传入错误信息字符串的构造方法
   public PersistenceException(String message) {
     super(message);
