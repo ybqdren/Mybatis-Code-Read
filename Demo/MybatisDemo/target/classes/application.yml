@@ -1,0 +1,9 @@
+server:
+  port: 8099
+
+
+spring:
+  datasource:
+    url: jdbc:{db}://{db_address}/{db_name}
+    username: {db_username}
+    password: {db_password}

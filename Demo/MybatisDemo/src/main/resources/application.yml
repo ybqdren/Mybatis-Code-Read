@@ -1,0 +1,10 @@
+server:
+  port: 8099
+
+
+# 使用了 mybatis-spring-boot-starter包之后，可以省略 MyBatis的配置文件，只需创建映射文件即可
+spring:
+  datasource:
+    url: jdbc:{db}://{db_address}/{db_name}
+    username: {db_username}
+    password: {db_password}
