@@ -109,17 +109,28 @@ public class ClassLoaderWrapper {
    * @return the resource or null
    */
   InputStream getResourceAsStream(String resource, ClassLoader[] classLoader) {
+    // 所示方法的输入参数除配置文件的路径外，还包括一组 ClassLoader -> ClassLoader[] classLoader
+
+    /**
+     ClassLoader叫作类加载器，是负责加载类的对象：
+     给定类的二进制名称，类加载器会尝试定位或生成构成该类定义的数据。
+     一般情况下，类加载器会将名称转换为文件名，然后从文件系统中读取该名称的类文件。
+      -- 因此，类加载器具有读取外部资源的能力，这里要借助的正是类加载器的这种能力。 --
+     */
+    // 依次调用传入的每一个类加载器的getResourceAsStream方法来尝试获取配置文件的输入流
     for (ClassLoader cl : classLoader) {
       if (null != cl) {
 
         // try to find the resource as passed
         InputStream returnValue = cl.getResourceAsStream(resource);
 
+        // 在尝试过程中如果失败的话，会在传入的地址前加上“/”再试一次。
         // now, some class loaders want this leading "/", so we'll add it and try again if we didn't find the resource
         if (null == returnValue) {
           returnValue = cl.getResourceAsStream("/" + resource);
         }
 
+        // 只要尝试成功，即表明成功加载了指定的资源，会将所获得的输入流返回。
         if (null != returnValue) {
           return returnValue;
         }

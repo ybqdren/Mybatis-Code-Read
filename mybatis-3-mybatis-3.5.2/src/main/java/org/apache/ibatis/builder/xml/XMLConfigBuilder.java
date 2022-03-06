@@ -18,6 +18,7 @@ package org.apache.ibatis.builder.xml;
 import java.io.InputStream;
 import java.io.Reader;
 import java.util.Properties;
+import java.util.regex.Pattern;
 import javax.sql.DataSource;
 
 import org.apache.ibatis.builder.BaseBuilder;
@@ -95,13 +96,26 @@ public class XMLConfigBuilder extends BaseBuilder {
       throw new BuilderException("Each XMLConfigBuilder can only be used once.");
     }
     parsed = true;
+
+    // “/configuration”是整个配置文件的根节点，因此这里是解析整个配置文件的入口
+    // parseConfiguration方法是解析配置文件的起始方法
     parseConfiguration(parser.evalNode("/configuration"));
+
+    // 返回了一个Configuration对象，这个对象包含了对配置文件所有节点和映射文件 mappers 子节点信息
     return configuration;
   }
 
+  // 解析配置文件的起始位置
   private void parseConfiguration(XNode root) {
     try {
       //issue #117 read properties first
+      // parseConfiguration 方法依次解析了配置文件 configuration 节点下的各个子节点，包括了所有的映射文件的 mappers 子节点。
+      /**
+       properties -> settings -> typeAliases -> plugins -> objectFactory -> objectWrapperFactory
+          -> reflectorFactory -> environments -> databaseIdProvider -> typeHandlers -> mappers
+       */
+      // 解析出的相关信息都放到了Configuration类的实例中，因此 Configuration 类中保存了配置文件的所有设置信息，也保存了映射文件的信息。
+      // 可见Configuration类是一个非常重要的类。
       propertiesElement(root.evalNode("properties"));
       Properties settings = settingsAsProperties(root.evalNode("settings"));
       loadCustomVfs(settings);
@@ -236,6 +250,7 @@ public class XMLConfigBuilder extends BaseBuilder {
         defaults.putAll(vars);
       }
       parser.setVariables(defaults);
+      // 解析出的相关信息都放到了Configuration类的实例中
       configuration.setVariables(defaults);
     }
   }
@@ -399,4 +414,8 @@ public class XMLConfigBuilder extends BaseBuilder {
     return false;
   }
 
+  @Override
+  protected Pattern parseExpression(String regex, String defaultValue) {
+    return super.parseExpression(regex, defaultValue);
+  }
 }

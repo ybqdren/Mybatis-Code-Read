@@ -74,8 +74,17 @@ public class SqlSessionFactoryBuilder {
 
   public SqlSessionFactory build(InputStream inputStream, String environment, Properties properties) {
     try {
+      /**
+       下面这两句代码完成了两步操作：
+          1. 生成了一个 XMLConfigBuilder 对象，并调用了其 parse 方法，
+             得到一个Configuration对象（因为 parse方法的输出结果为Configuration对象）
+          2. 调用了 SqlSessionFactoryBuilder 自身的 build 方法，传入参数为上一步得到的Configuration对象。
+       */
       XMLConfigBuilder parser = new XMLConfigBuilder(inputStream, environment, properties);
+
+      // 调用 SqlSessionFactoryBuilder#build ，传入一个 Configuration 对象。返回 SqlSessionFactory 对象
       return build(parser.parse());
+
     } catch (Exception e) {
       throw ExceptionFactory.wrapException("Error building SqlSession.", e);
     } finally {
@@ -88,6 +97,7 @@ public class SqlSessionFactoryBuilder {
     }
   }
 
+  // 接受 Configuration 对象为参数，返回 SqlSessionFactory 对象
   public SqlSessionFactory build(Configuration config) {
     return new DefaultSqlSessionFactory(config);
   }
