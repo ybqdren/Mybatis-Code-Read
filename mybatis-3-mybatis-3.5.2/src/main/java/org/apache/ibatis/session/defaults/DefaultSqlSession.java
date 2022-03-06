@@ -43,6 +43,8 @@ import org.apache.ibatis.session.SqlSession;
  * The default implementation for {@link SqlSession}.
  * Note that this class is not Thread-Safe.
  *
+ * 提供了查询、增加、更新、删除、提交、回滚等大量的方法
+ *
  * @author Clinton Begin
  */
 public class DefaultSqlSession implements SqlSession {
@@ -143,6 +145,11 @@ public class DefaultSqlSession implements SqlSession {
   @Override
   public <E> List<E> selectList(String statement, Object parameter, RowBounds rowBounds) {
     try {
+      // 每个 MappedStatement 对象对应了我们设置的一个数据库操作节点，它主要定义了数据库操作语句、输入/输出参数等信息
+      /**
+       configuration.getMappedStatement(statement) ->
+                       将要执行的 MappedStatement 对象从 Configuration 对象，存储的映射文件信息中找了出来。
+       */
       MappedStatement ms = configuration.getMappedStatement(statement);
       return executor.query(ms, wrapCollection(parameter), rowBounds, Executor.NO_RESULT_HANDLER);
     } catch (Exception e) {

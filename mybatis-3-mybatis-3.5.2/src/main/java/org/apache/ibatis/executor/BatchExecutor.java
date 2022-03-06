@@ -78,15 +78,20 @@ public class BatchExecutor extends BaseExecutor {
     return BATCH_UPDATE_RETURN_VALUE;
   }
 
+  // 生成 Statement 对象
   @Override
   public <E> List<E> doQuery(MappedStatement ms, Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql)
       throws SQLException {
+    // Statement 类并不是 MyBatis 中的类，而是 java.sql 包中类，此类能够执行静态 SQL 语句并返回结果
     Statement stmt = null;
     try {
       flushStatements();
       Configuration configuration = ms.getConfiguration();
+      // 通过 Configuration 的 newStatementHandler 方法获得了一个 StatementHandler 对象 handler
+      // StatementHandler 是一个语句处理器类，其中封装了很多语句操作方法
       StatementHandler handler = configuration.newStatementHandler(wrapper, ms, parameterObject, rowBounds, resultHandler, boundSql);
       Connection connection = getConnection(ms.getStatementLog());
+      // 将查询操作交给 StatementHandler 对象进行
       stmt = handler.prepare(connection, transaction.getTimeout());
       handler.parameterize(stmt);
       return handler.query(stmt, resultHandler);

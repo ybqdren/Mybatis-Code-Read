@@ -42,6 +42,7 @@ public class MapperProxyFactory<T> {
     return methodCache;
   }
 
+  // 返回一个基于反射的动态代理对象
   @SuppressWarnings("unchecked")
   protected T newInstance(MapperProxy<T> mapperProxy) {
     return (T) Proxy.newProxyInstance(mapperInterface.getClassLoader(), new Class[] { mapperInterface }, mapperProxy);

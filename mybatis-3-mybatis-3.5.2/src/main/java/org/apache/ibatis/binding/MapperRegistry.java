@@ -41,6 +41,8 @@ public class MapperRegistry {
   }
 
   @SuppressWarnings("unchecked")
+  // getMapper方法通过映射接口信息从所有已经解析的映射文件中找到对应的映射文件，
+  // 然后根据该映射文件组建并返回接口的一个实现对象
   public <T> T getMapper(Class<T> type, SqlSession sqlSession) {
     final MapperProxyFactory<T> mapperProxyFactory = (MapperProxyFactory<T>) knownMappers.get(type);
     if (mapperProxyFactory == null) {

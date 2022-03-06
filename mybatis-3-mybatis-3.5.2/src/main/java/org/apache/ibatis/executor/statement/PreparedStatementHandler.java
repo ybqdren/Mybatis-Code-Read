@@ -61,7 +61,10 @@ public class PreparedStatementHandler extends BaseStatementHandler {
   @Override
   public <E> List<E> query(Statement statement, ResultHandler resultHandler) throws SQLException {
     PreparedStatement ps = (PreparedStatement) statement;
+    // 真正地执行了 SQL 语句
     ps.execute();
+    // 把执行结果交给 ResultHandler 对象处理
+    // 因为 PreparedStatement类并不是MyBatis中的类，因而ps.execute（）的执行不再由MyBatis负责，而是由 com.mysql.cj.jdbc包中的类负责
     return resultSetHandler.handleResultSets(ps);
   }
 
