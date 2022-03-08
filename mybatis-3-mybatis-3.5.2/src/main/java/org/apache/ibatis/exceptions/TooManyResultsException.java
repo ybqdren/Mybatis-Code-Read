@@ -17,6 +17,13 @@ package org.apache.ibatis.exceptions;
 
 /**
  * @author Clinton Begin
+ * 设置了值的 serialVersionUID字段
+ *
+ * 有四种构造方法
+ * · 无参构造方法；
+ * · 传入错误信息字符串的构造方法；
+ * · 传入上级 Throwable实例的构造方法；
+ * · 传入上级 Throwable实例和错误信息字符串的构造方法。
  */
 public class TooManyResultsException extends PersistenceException {
 
