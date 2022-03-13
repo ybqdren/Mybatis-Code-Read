@@ -20,6 +20,8 @@ import org.apache.ibatis.reflection.ReflectionException;
 
 /**
  * @author Clinton Begin
+ *
+ * 是 {@link ObjectWrapperFactory} 的默认实现类，不过该实现中并没有实现任何功能
  */
 public class DefaultObjectWrapperFactory implements ObjectWrapperFactory {
 

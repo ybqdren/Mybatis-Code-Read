@@ -19,6 +19,11 @@ import org.apache.ibatis.reflection.MetaObject;
 
 /**
  * @author Clinton Begin
+ *
+ * 对象包装器工厂的接口
+ *
+ * Mybatis 允许用户通过配置文件中的 objectWrapperFactory 节点
+ * 来注入新的 ObjectWrapperFactory
  */
 public interface ObjectWrapperFactory {
 
