@@ -39,6 +39,7 @@ public class DefaultReflectorFactory implements ReflectorFactory {
   @Override
   public void setClassCacheEnabled(boolean classCacheEnabled) {
     this.classCacheEnabled = classCacheEnabled;
+
   }
 
   /**

@@ -28,6 +28,8 @@ import org.apache.ibatis.reflection.property.PropertyTokenizer;
 
 /**
  * @author Clinton Begin
+ *
+ * 元类，它是针对类的进一步封装，其内部继承了类可以使用的反射器和反射器工厂
  */
 public class MetaClass {
 

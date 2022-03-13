@@ -29,13 +29,21 @@ import org.apache.ibatis.reflection.wrapper.ObjectWrapperFactory;
 
 /**
  * @author Clinton Begin
+ *
+ * 整个包装类中除了原始对象本身外，还包装了对象包装器、对象工厂、对象包装器工厂、反射工厂等。
+ * 因此，只要使用 MetaObject对一个对象进行包装，包装类中就具有大量的辅助类，便于进行各种反射操作。
  */
 public class MetaObject {
 
+  // 原始对象
   private final Object originalObject;
+  // 对象包装器
   private final ObjectWrapper objectWrapper;
+  // 对象工厂
   private final ObjectFactory objectFactory;
+  // 对象包装器工厂
   private final ObjectWrapperFactory objectWrapperFactory;
+  // 反射工厂
   private final ReflectorFactory reflectorFactory;
 
   private MetaObject(Object object, ObjectFactory objectFactory, ObjectWrapperFactory objectWrapperFactory, ReflectorFactory reflectorFactory) {

@@ -22,6 +22,10 @@ import org.apache.ibatis.reflection.wrapper.ObjectWrapperFactory;
 
 /**
  * @author Clinton Begin
+ *
+ * 限定了一些默认值
+ *
+ * SystemMetaObject 是一个智能使用默认值的 MetaObject 工厂
  */
 public final class SystemMetaObject {
 
@@ -36,6 +40,7 @@ public final class SystemMetaObject {
   private static class NullObject {
   }
 
+  // 可以使用默认值输出一个 MetaObject 对象
   public static MetaObject forObject(Object object) {
     return MetaObject.forObject(object, DEFAULT_OBJECT_FACTORY, DEFAULT_OBJECT_WRAPPER_FACTORY, new DefaultReflectorFactory());
   }
