@@ -18,6 +18,12 @@ package org.apache.ibatis.reflection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+/**
+ * 是 {@link ReflectorFactory} 工厂接口的默认实现
+ *
+ * DefaultReflectorFactory 中最核心的方法就是用来生成一个类的 Reflector 对象的findForClass方法
+ */
+
 public class DefaultReflectorFactory implements ReflectorFactory {
   private boolean classCacheEnabled = true;
   private final ConcurrentMap<Class<?>, Reflector> reflectorMap = new ConcurrentHashMap<>();
@@ -35,9 +41,17 @@ public class DefaultReflectorFactory implements ReflectorFactory {
     this.classCacheEnabled = classCacheEnabled;
   }
 
+  /**
+   * 生产 Reflector 对象
+   *
+   * @param type 目标类型
+   * @return 目标类型的 Reflector 对象
+   */
   @Override
   public Reflector findForClass(Class<?> type) {
+    // 允许缓存
     if (classCacheEnabled) {
+      // 生产输入参数 type 的反射器对象，并放入缓存
       // synchronized (type) removed see issue #461
       return reflectorMap.computeIfAbsent(type, Reflector::new);
     } else {

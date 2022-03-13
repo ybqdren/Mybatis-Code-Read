@@ -15,6 +15,9 @@
  */
 package org.apache.ibatis.reflection;
 
+/**
+ * 是 {@link Reflector} 的工厂接口
+ */
 public interface ReflectorFactory {
 
   boolean isClassCacheEnabled();

@@ -1,37 +1,19 @@
 /**
- *    Copyright 2009-2019 the original author or authors.
- *
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
+ * Copyright 2009-2019 the original author or authors.
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.ibatis.reflection;
-
-import java.lang.reflect.Array;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.GenericArrayType;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.ReflectPermission;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.ibatis.reflection.invoker.GetFieldInvoker;
 import org.apache.ibatis.reflection.invoker.Invoker;
@@ -39,33 +21,64 @@ import org.apache.ibatis.reflection.invoker.MethodInvoker;
 import org.apache.ibatis.reflection.invoker.SetFieldInvoker;
 import org.apache.ibatis.reflection.property.PropertyNamer;
 
+import java.lang.reflect.*;
+import java.util.*;
+import java.util.Map.Entry;
+
 /**
  * This class represents a cached set of class definition information that
  * allows for easy mapping between property names and getter/setter methods.
  *
  * @author Clinton Begin
+ * <p>
+ * 负责对一个类进行反射解析，并将解析后的结果在属性中存储起来
  */
 public class Reflector {
 
   private final Class<?> type;
   private final String[] readablePropertyNames;
   private final String[] writablePropertyNames;
+
+  // set 方法映射表。键为属性名，值为对应的 set 方法
   private final Map<String, Invoker> setMethods = new HashMap<>();
+
+  // get 方法映射表。键为属性名，值为对应的 get 方法
   private final Map<String, Invoker> getMethods = new HashMap<>();
+
+  // set 方法输入类型。键为属性名。值为对应的该属性的 set 方法的类型（实际为 set 方法的第一个参数的类型）
   private final Map<String, Class<?>> setTypes = new HashMap<>();
+
+  // get 方法输入类型。键为属性名。值为对应的该属性的 get 方法的类型（实际为 get 方法的第一个参数的类型）
   private final Map<String, Class<?>> getTypes = new HashMap<>();
+
+  // 默认构造函数
   private Constructor<?> defaultConstructor;
 
+  // 大小写无关的属性映射表，键为属性名全大写值，值为属性名
   private Map<String, String> caseInsensitivePropertyMap = new HashMap<>();
 
+  /**
+   * Reflector 的构造方法
+   *
+   * @param clazz 需要被反射处理的目标类
+   */
   public Reflector(Class<?> clazz) {
+    // 要被反射解析的类
     type = clazz;
+    // 设置默认构造器属性
     addDefaultConstructor(clazz);
+    // 解析所有的 getter
     addGetMethods(clazz);
+    // 解析所有的 setter
     addSetMethods(clazz);
+    // 解析所有属性
     addFields(clazz);
+    // 设定可读属性
     readablePropertyNames = getMethods.keySet().toArray(new String[0]);
+    // 设定可写属性
     writablePropertyNames = setMethods.keySet().toArray(new String[0]);
+
+    // 将刻度或者可写的属性写入大小写无关的属性映射表
     for (String propName : readablePropertyNames) {
       caseInsensitivePropertyMap.put(propName.toUpperCase(Locale.ENGLISH), propName);
     }
@@ -80,14 +93,29 @@ public class Reflector {
       .findAny().ifPresent(constructor -> this.defaultConstructor = constructor);
   }
 
+  /**
+   * 找出类中 get 方法
+   *
+   * @param clazz 需要被反射处理的目标类
+   */
   private void addGetMethods(Class<?> clazz) {
+    // 存储属性的 get 方法。Map 的键为属性名，值为 get 方法列表。
+    // 某个属性的 get 方法用列表存储是因为前期可能会为某一个属性找到多个可能的 get 方法
     Map<String, List<Method>> conflictingGetters = new HashMap<>();
+
+    // 找出该类中所有的方法
     Method[] methods = getClassMethods(clazz);
+
+    // 过滤出 get 方法，过滤条件有：无输入参数、符合 Java Bean 的命名规则：然后去除方法对应的属性名、方法
+    // 放入 conflictingGetters
     Arrays.stream(methods).filter(m -> m.getParameterTypes().length == 0 && PropertyNamer.isGetter(m.getName()))
       .forEach(m -> addMethodConflict(conflictingGetters, PropertyNamer.methodToProperty(m.getName()), m));
+
+    // 如果一个属性有多个疑似 get 方法，resolveGetterConflicts 用来找出合适的那个
     resolveGetterConflicts(conflictingGetters);
   }
 
+  // Todo 待读
   private void resolveGetterConflicts(Map<String, List<Method>> conflictingGetters) {
     for (Entry<String, List<Method>> entry : conflictingGetters.entrySet()) {
       Method winner = null;
@@ -102,9 +130,9 @@ public class Reflector {
         if (candidateType.equals(winnerType)) {
           if (!boolean.class.equals(candidateType)) {
             throw new ReflectionException(
-                "Illegal overloaded getter method with ambiguous type for property "
-                    + propName + " in class " + winner.getDeclaringClass()
-                    + ". This breaks the JavaBeans specification and can cause unpredictable results.");
+              "Illegal overloaded getter method with ambiguous type for property "
+                + propName + " in class " + winner.getDeclaringClass()
+                + ". This breaks the JavaBeans specification and can cause unpredictable results.");
           } else if (candidate.getName().startsWith("is")) {
             winner = candidate;
           }
@@ -114,9 +142,9 @@ public class Reflector {
           winner = candidate;
         } else {
           throw new ReflectionException(
-              "Illegal overloaded getter method with ambiguous type for property "
-                  + propName + " in class " + winner.getDeclaringClass()
-                  + ". This breaks the JavaBeans specification and can cause unpredictable results.");
+            "Illegal overloaded getter method with ambiguous type for property "
+              + propName + " in class " + winner.getDeclaringClass()
+              + ". This breaks the JavaBeans specification and can cause unpredictable results.");
         }
       }
       addGetMethod(propName, winner);
@@ -186,8 +214,8 @@ public class Reflector {
       return setter1;
     }
     throw new ReflectionException("Ambiguous setters defined for property '" + property + "' in class '"
-        + setter2.getDeclaringClass() + "' with types '" + paramType1.getName() + "' and '"
-        + paramType2.getName() + "'.");
+      + setter2.getDeclaringClass() + "' with types '" + paramType1.getName() + "' and '"
+      + paramType2.getName() + "'.");
   }
 
   private void addSetMethod(String name, Method method) {
