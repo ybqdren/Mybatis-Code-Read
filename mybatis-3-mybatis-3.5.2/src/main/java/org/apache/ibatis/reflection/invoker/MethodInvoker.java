@@ -22,17 +22,26 @@ import org.apache.ibatis.reflection.Reflector;
 
 /**
  * @author Clinton Begin
+ *
+ * 负责对象其他方法的写操作
  */
 public class MethodInvoker implements Invoker {
 
   private final Class<?> type;
   private final Method method;
 
+  /**
+   * 构造方法
+   * @param method 方法
+   */
   public MethodInvoker(Method method) {
     this.method = method;
 
     if (method.getParameterTypes().length == 1) {
+      // 有且只有一个输入参数时，type 为输入参数类型
       type = method.getParameterTypes()[0];
+
+      // 否则 type 为输出参数类型
     } else {
       type = method.getReturnType();
     }

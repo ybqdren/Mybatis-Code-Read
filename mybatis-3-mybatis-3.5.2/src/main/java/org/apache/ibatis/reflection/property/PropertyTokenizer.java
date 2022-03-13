@@ -19,11 +19,20 @@ import java.util.Iterator;
 
 /**
  * @author Clinton Begin
+ *
+ * PropertyTokenizer 是一个属性标记器。
+ * 传入一个形如“student[sId].name”的字符串后，该标记器会将其拆分开，放入各个属性中
+ *
+ * 此类中的所有操作都是字符串操作。
  */
 public class PropertyTokenizer implements Iterator<PropertyTokenizer> {
+  // student
   private String name;
+  // student[sId]
   private final String indexedName;
+  // sId
   private String index;
+  // name
   private final String children;
 
   public PropertyTokenizer(String fullname) {

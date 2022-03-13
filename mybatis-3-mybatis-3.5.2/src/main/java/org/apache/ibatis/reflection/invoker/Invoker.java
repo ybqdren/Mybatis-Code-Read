@@ -19,9 +19,26 @@ import java.lang.reflect.InvocationTargetException;
 
 /**
  * @author Clinton Begin
+ *
+ * 封装和简化反射操作，只定义了两个抽象方法
  */
 public interface Invoker {
+  /**
+   * 执行方法。
+   * 该方法负责完成对象方法的调用和对象属性的读写
+   * 在三个实现类中，分别是属性读取操作、属性赋值操作、方法触发操作
+   *
+   * @param target
+   * @param args
+   * @return
+   * @throws IllegalAccessException
+   * @throws InvocationTargetException
+   */
   Object invoke(Object target, Object[] args) throws IllegalAccessException, InvocationTargetException;
 
+  /**
+   * 用来获取类型。
+   * @return
+   */
   Class<?> getType();
 }

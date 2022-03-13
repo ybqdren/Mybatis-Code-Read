@@ -21,6 +21,11 @@ import org.apache.ibatis.reflection.ReflectionException;
 
 /**
  * @author Clinton Begin
+ *
+ *  提供属性名称相关的操作功能。例如，通过 get、set方法的方法名找出对应的属性等。
+ *  要想让 PropertyNamer 正常地发挥作用，需保证对象属性、方法的命名遵循 JavaBean的命名规范：
+ *             ● 如果类的成员变量的名字是 abc，那么该属性对应的读写方法分别命名为 getAbc（）和setAbc（）。
+ *             ● 如果类的属性是 boolean 类型，则允许使用“is”代替上面的“get”，读方法命名为isAbc（）。
  */
 public final class PropertyNamer {
 
