@@ -21,6 +21,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
+ *
+ *
+ * 类型处理器接口,43个实现类（type 包下有43个）
  * @author Clinton Begin
  */
 public interface TypeHandler<T> {

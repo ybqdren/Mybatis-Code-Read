@@ -19,6 +19,8 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
 /**
+ * 类型参考器
+ *
  * References a generic type.
  *
  * @param <T> the referenced type
