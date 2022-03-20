@@ -44,9 +44,14 @@ public class ParamNameResolver {
    * <li>aMethod(int a, int b) -&gt; {{0, "0"}, {1, "1"}}</li>
    * <li>aMethod(int a, RowBounds rb, int b) -&gt; {{0, "0"}, {2, "1"}}</li>
    * </ul>
+   *
+   * 方法输入参数的参数次序表。键为参数次序，值为参数名称或者参数 @Param 注解的值
    */
   private final SortedMap<Integer, String> names;
 
+  /**
+   * 标识该方法输入参数中是否含有 @Param 注解
+   */
   private boolean hasParamAnnotation;
 
   public ParamNameResolver(Configuration config, Method method) {
