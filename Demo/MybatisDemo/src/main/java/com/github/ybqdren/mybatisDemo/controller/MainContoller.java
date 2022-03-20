@@ -3,6 +3,7 @@ package com.github.ybqdren.mybatisDemo.controller;
 import com.github.ybqdren.mybatisDemo.dao.UserMapper;
 import com.github.ybqdren.mybatisDemo.pojo.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,6 +23,15 @@ import java.util.List;
 public class MainContoller {
     @Autowired
     private UserMapper userMapper;
+
+    @GetMapping("/query/userbyschoolname")
+    public Object queryUserBySchoolName(){
+        return userMapper.queryUserBySchoolName2(1,
+                "易哥",
+                "yeecode@sample.com",
+                18,
+                "Sunny School");
+    }
 
     @RequestMapping("/")
     public Object index() {

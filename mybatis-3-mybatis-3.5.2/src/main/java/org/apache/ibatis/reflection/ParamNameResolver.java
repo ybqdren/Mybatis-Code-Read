@@ -54,31 +54,46 @@ public class ParamNameResolver {
    */
   private boolean hasParamAnnotation;
 
+  /**
+   * 参数名解析器的构造方法
+   * @param config 配置信息
+   * @param method 要被分析的方法
+   */
   public ParamNameResolver(Configuration config, Method method) {
+    // 获取参数类型列表
     final Class<?>[] paramTypes = method.getParameterTypes();
+    // 准备存取所有参数的注解，是二维数组
     final Annotation[][] paramAnnotations = method.getParameterAnnotations();
     final SortedMap<Integer, String> map = new TreeMap<>();
     int paramCount = paramAnnotations.length;
+    //  循环处理各个参数
     // get names from @Param annotations
     for (int paramIndex = 0; paramIndex < paramCount; paramIndex++) {
       if (isSpecialParameter(paramTypes[paramIndex])) {
+        // 跳过特别的参数
         // skip special parameters
         continue;
       }
+      // 参数名称
       String name = null;
       for (Annotation annotation : paramAnnotations[paramIndex]) {
+        // 找出参数的注解
         if (annotation instanceof Param) {
+          // 如果注解是 Param
           hasParamAnnotation = true;
+          // 就以 Param 中的 value 作为参数名称
           name = ((Param) annotation).value();
           break;
         }
       }
       if (name == null) {
+        // 否则，保留参数的原有名称
         // @Param was not specified.
         if (config.isUseActualParamName()) {
           name = getActualParamName(method, paramIndex);
         }
         if (name == null) {
+          // 参数名称获取不到，则按照参数 index 命名
           // use the parameter index as the name ("0", "1", ...)
           // gcode issue #71
           name = String.valueOf(map.size());

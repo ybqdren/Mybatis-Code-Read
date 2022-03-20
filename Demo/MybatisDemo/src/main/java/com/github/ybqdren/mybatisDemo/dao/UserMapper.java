@@ -19,4 +19,9 @@ import java.util.List;
 @Mapper
 public interface UserMapper {
     public List<User> queryUserBySchoolName(User user);
+
+    public List<User> queryUserBySchoolName2(int id,
+                                            String name,
+                                            @Param("email") String email, int age,
+                                            String schoolName);
 }

@@ -7,5 +7,12 @@
         <if test="schoolName != null">
             WHERE schoolName = #{schoolName}
         </if>
-</select>
-</mapper>
+
+
+    <select id="queryUserBySchoolName2" resultType="com.github.ybqdren.mybatisDemo.pojo.User">
+        select *
+        from `user`
+        <if test="schoolName != null">
+            WHERE schoolName = #{schoolName}
+        </if>
+    </select></mapper>
